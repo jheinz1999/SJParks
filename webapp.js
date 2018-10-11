@@ -9,6 +9,7 @@ const User = require('./models/User');
 
 // Create Express web app
 const app = express();
+
 //app.set('view engine', 'html');
 app.set('view engine', 'pug');
 
@@ -26,8 +27,15 @@ app.use(bodyParser.urlencoded({
 // Create and manage HTTP sessions for all requests
 app.use(session({
     secret: config.secret,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
+    cookie: {
+        maxAge: 10 * 1000,
+        //activeDuration: 5 * 60 * 1000,
+        httpOnly: true,
+        secure: false,
+        ephemeral: true,
+    }
 }));
 
 // Use connect-flash to persist informational messages across redirects
@@ -54,22 +62,10 @@ app.use(function(err, request, response, next) {
 });
 
 // Session
-// app.use(function(req, res, next) {
-//     if (req.session && req.session.user) {
-//       User.findOne({ username: req.session.user.username }, function(err, user) {
-//         if (user) {
-//           req.user = user;
-//           delete req.user.password; // delete the password from the session
-//           req.session.user = user;  //refresh the session value
-//           res.locals.user = user;
-//         }
-//         // finishing processing the middleware and run the route
-//         next();
-//       });
-//     } else {
-//       next();
-//     }
-//   });
+app.use('/admin', function(err, req, res, next) {
+    console.log(err);
+    res.redirect('/login');
+});
 
 // Export Express app
 module.exports = app;

@@ -11,6 +11,7 @@ const admin = require('./admin');
 
 // Map routes to controller functions
 module.exports = function(app) {
+
   // Twilio SMS webhook route
   app.post('/message', message.webhook);
 
@@ -21,17 +22,23 @@ module.exports = function(app) {
   // to all subscribers
   app.get('/admin', login.requireLogin, pages.showForm);//
 
-  // Render a login screen with which an administrator can log in
-  app.get('/login', pages.loginform);
+  // Handle new user form submission 
+  app.post('/login/signup', login.newUser)
+
+  // Twilio SMS webhook route
+  app.post('/message', message.webhook);
+
+  // Handle sign in
+  app.post('/login', login.validate);
 
   // Handle form submission and send messages to subscribers
   app.post('/message/send', send_sms.sendMessages);
 
-  // Handle new user form submission 
-  app.post('/login/signup', login.newUser);
-
   // Handle new park form submission
   app.post('/admin/new_park', admin.createPark);
+
+  // Handle logout
+  app.get('/logout', login.logout);
 
 
   
